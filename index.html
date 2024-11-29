@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text-to-Image Generator</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Text-to-Image Generator</h1>
+        <form id="generate-form">
+            <label for="prompt">Enter a prompt:</label>
+            <textarea id="prompt" name="prompt" placeholder="Describe your image..." required></textarea>
+            <button type="submit">Generate Image</button>
+        </form>
+        <div id="result">
+            <img id="generated-image" src="" alt="Generated image will appear here">
+        </div>
+    </div>
+    <script>
+        document.getElementById('generate-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const prompt = document.getElementById('prompt').value;
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    document.getElementById('generated-image').src = data.image_url;
+                } else {
+                    alert(data.error || 'Failed to generate image.');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
